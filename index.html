@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>TrackExpense | Expense Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
+    <link rel="stylesheet" href="style.css">
+
+
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="nav-wrapper green darken-1">
+            <a href="#" class="brand-logo center">TrackExpense</a>
+            <ul class="right">
+                <li>
+                    <a href="#" class="clear-btn btn green lighten-3 waves-effect">Clear expenses</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <br>
+
+    <div class="container">
+
+        <!-- Form Card -->
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Add Expense</span>
+                <form class="col">
+                    <div class="row">
+                        <div class="input-field col s4">
+                            <select>
+                                <optgroup label="Food">
+                                    <option value="12">Groceries</option>
+                                    <option value="13">Restaurant</option>
+                                    <option value="14">Street Food</option>
+                                    <option value="15">Pet Food</option>
+                                </optgroup>
+                                <optgroup label="Transportation">
+                                    <option value="4">Gas</option>
+                                    <option value="5">Car payment</option>
+                                    <option value="6">Tires</option>
+                                    <option value="7">Maintenance / Oil changes</option>
+                                    <option value="8">Parking Fee</option>
+                                    <option value="9">Repairs</option>
+                                    <option value="10">Bike gear</option>
+                                    <option value="11">Bike repairs</option>
+                                </optgroup>
+                                <optgroup label="Utilities">
+                                    <option value="12">Electricity</option>
+                                    <option value="13">Water</option>
+                                    <option value="14">Phones</option>
+                                    <option value="15">Cable</option>
+                                    <option value="15">Internet</option>
+                                </optgroup>
+                                <optgroup label="Housing">
+                                    <option value="1">Mortgage or Rent</option>
+                                    <option value="2">Property tax</option>
+                                    <option value="3">Household repairs</option>
+                                </optgroup>
+                                <optgroup label="Household supplies">
+                                    <option value="1">Toiletries</option>
+                                    <option value="2">Laundry detergent</option>
+                                    <option value="3">Cleaning supplies</option>
+                                    <option value="3">Tools</option>
+                                </optgroup>
+                                <optgroup label="Clothing">
+                                    <option value="12">Clothing</option>
+                                    <option value="13">Shoes</option>
+                                </optgroup>
+                                <optgroup label="Education">
+                                    <option value="1">Courses / Tutorials / Trainings</option>
+                                    <option value="2">Books</option>
+                                    <option value="3">School supplies</option>
+                                </optgroup>
+                                <optgroup label="Entertainment">
+                                    <option value="1">Alcohol and/or Bars</option>
+                                    <option value="2">Movies</option>
+                                    <option value="3">Concerts</option>
+                                    <option value="3">Subscriptions (Netflix, Amazon, etc.)</option>
+                                    <option value="3">Vacations</option>
+                                    <option value="3">Games</option>
+                                </optgroup>
+                                <optgroup label="Personal">
+                                    <option value="1">Gym membership</option>
+                                    <option value="2">Haircuts</option>
+                                    <option value="3">Salon services</option>
+                                    <option value="3">Cosmetics</option>
+                                    <option value="3">Spa / Massage / Treatments</option>
+                                </optgroup>
+                                <optgroup label="Debt">
+                                    <option value="1">Credit Card Refund</option>
+                                    <option value="2">Personal Loans Refund</option>
+                                </optgroup>
+                                <optgroup label="Savings">
+                                    <option value="1">Emergency Fund</option>
+                                    <option value="2">Savings</option>
+                                </optgroup>
+                            </select>
+                            <label>Expense Category</label>
+                        </div>
+                        <div class="input-field col s4">
+                            <input type="text" placeholder="Add expense name" id="item-name">
+                            <label for="item-name">Spent on:</label>
+                        </div>
+                        <div class="input-field col s4">
+                            <input type="text" placeholder="Add amount spent" id="item-amount">
+                            <label for="item-amount">Spent:</label>
+                        </div>
+                        <button class="add-btn btn green darken-3 waves-effect">
+                            <i class="fa fa-plus"></i> Add Expense</button>
+                        <button class="update-btn btn orange waves-effect">
+                            <i class="fa fa-pencil-square-o"></i> Update Expense</button>
+                        <button class="delete-btn btn red waves-effect">
+                            <i class="fa fa-remove"></i> Delete Expense</button>
+                        <button class="back-btn btn grey pull-right waves-effect">
+                            <i class="fa fa-chevron-circle-left"></i> Back</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Expense Count -->
+        <h3 class="center-align">Total Expenses:
+            <span class="total-expenses">0</span>
+        </h3>
+
+        <!-- Expense List -->
+        <ul id="expense-list" class="collection">
+            <!-- <li class="collection-item" id="item-0">
+                <span class="title green-text text-darken-2">Housing | </span>
+                <strong>Rent for April: </strong>
+                <em>650 euros</em>
+                <a href="#" class="secondary-content">
+                    <i class="fa fa-pencil"></i>
+                </a>
+            </li>
+            <li class="collection-item" id="item-0">
+                <span class="title green-text text-darken-2">Housing | </span>
+                <strong>Rent for April: </strong>
+                <em>650 euros</em>
+                <a href="#" class="secondary-content">
+                    <i class="fa fa-pencil"></i>
+                </a>
+            </li>
+            <li class="collection-item" id="item-0">
+                <span class="title green-text text-darken-2">Housing | </span>
+                <strong>Rent for April: </strong>
+                <em>650 euros</em>
+                <a href="#" class="secondary-content">
+                    <i class="fa fa-pencil"></i>
+                </a>
+            </li> -->
+        </ul>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <!-- Compiled and minified Materialize JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
