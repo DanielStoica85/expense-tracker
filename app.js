@@ -10,7 +10,7 @@ $(document).ready(function () {
 const ItemController = (function () {
 
     // Item (expense) constructor
-    const Item = function (id, category, name, amount) {
+    const Expense = function (id, category, name, amount) {
         this.id = id;
         this.name = name;
         this.category = category;
@@ -25,12 +25,12 @@ const ItemController = (function () {
             name: 'Rent',
             amount: 650
         }, {
-            id: 0,
+            id: 1,
             category: 'Restaurant',
             name: 'Monelli',
             amount: 100
         }, {
-            id: 0,
+            id: 2,
             category: 'Gas',
             name: 'Gas March',
             amount: 100
@@ -44,6 +44,27 @@ const ItemController = (function () {
         getItems: function () {
             return data.items;
         },
+        addExpense: function (category, name, amount) {
+            let id;
+            // Create id
+            if (data.items.length > 0) {
+                id = data.items[data.items.length - 1].id + 1;
+            } else {
+                id = 0;
+            }
+
+            // Amount --> Number
+            amount = parseInt(amount);
+
+            // Create new expense
+            const newExpense = new Expense(id, category, name, amount);
+
+            // Add expense to list
+            data.items.push(newExpense);
+
+            return newExpense;
+
+        },
         logData: function () {
             return data;
         }
@@ -56,7 +77,10 @@ const UIController = (function () {
 
     const UISelectors = {
         itemList: '#expense-list',
-        addBtn: '.add-btn'
+        addBtn: '.add-btn',
+        expenseNameInput: '#item-name',
+        expenseAmountInput: '#item-amount',
+        expenseCategory: '.optgroup-option.active.selected span'
     }
 
     // Public methods
@@ -76,6 +100,13 @@ const UIController = (function () {
 
             // Insert list items
             document.querySelector(UISelectors.itemList).innerHTML = html;
+        },
+        getExpenseInput: function () {
+            return {
+                name: document.querySelector(UISelectors.expenseNameInput).value,
+                amount: document.querySelector(UISelectors.expenseAmountInput).value,
+                category: document.querySelector(UISelectors.expenseCategory).textContent
+            }
         },
         getSelectors: function () {
             return UISelectors;
@@ -97,7 +128,16 @@ const App = (function (ItemController, UIController) {
 
     // Add item on submit
     const addItemOnSubmit = function (e) {
-        console.log('Adding');
+
+        // Get form input from UI Controller
+        const input = UIController.getExpenseInput();
+
+        // Check for name and amount
+        if (input.name !== '' && input.amount !== '') {
+            // Add expense
+            const newExpense = ItemController.addExpense(input.category, input.name, input.amount);
+        }
+
         e.preventDefault();
     }
 
