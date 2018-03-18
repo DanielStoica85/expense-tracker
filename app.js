@@ -41,6 +41,9 @@ const ItemController = (function () {
 
     // Public methods
     return {
+        getItems: function () {
+            return data.items;
+        },
         logData: function () {
             return data;
         }
@@ -51,9 +54,32 @@ const ItemController = (function () {
 // UI Controller
 const UIController = (function () {
 
+    const UISelectors = {
+        itemList: '#expense-list',
+        addBtn: '.add-btn'
+    }
+
     // Public methods
     return {
+        populateItemList: function (items) {
+            let html = '';
+            items.forEach(function (item) {
+                html += `<li class="collection-item" id="item-${item.id}">
+                            <span class="title green-text text-darken-2">${item.category} | </span>
+                            <strong>${item.name}: </strong>
+                            <em>${item.amount} euros</em>
+                            <a href="#" class="secondary-content">
+                                <i class="edit-item fa fa-pencil"></i>
+                            </a>
+                        </li>`;
+            });
 
+            // Insert list items
+            document.querySelector(UISelectors.itemList).innerHTML = html;
+        },
+        getSelectors: function () {
+            return UISelectors;
+        }
     }
 
 })();
@@ -61,10 +87,31 @@ const UIController = (function () {
 // App Controller
 const App = (function (ItemController, UIController) {
 
+    // Load event listeners
+    const loadEventListeners = function () {
+        // Get UI Selectors
+        const UISelectors = UIController.getSelectors();
+        // Add item event
+        document.querySelector(UISelectors.addBtn).addEventListener('click', addItemOnSubmit);
+    }
+
+    // Add item on submit
+    const addItemOnSubmit = function (e) {
+        console.log('Adding');
+        e.preventDefault();
+    }
+
     // Public methods
     return {
         init: function () {
-            console.log('Initializing app!');
+            // fetch items from data structure
+            const items = ItemController.getItems();
+
+            // populate list with fetched items
+            UIController.populateItemList(items);
+
+            // Load event listeners
+            loadEventListeners();
         }
     }
 
