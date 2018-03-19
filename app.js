@@ -73,6 +73,21 @@ const ItemController = (function () {
             });
             return found;
         },
+        updateExpense: function (name, amount, category) {
+            // Amount to number
+            amount = parseInt(amount);
+
+            let found = null;
+            data.items.forEach(function (item) {
+                if (item.id === data.currentItem.id) {
+                    item.name = name;
+                    item.amount = amount;
+                    item.category = category;
+                    found = item;
+                }
+            });
+            return found;
+        },
         getCurrentExpense: function () {
             return data.currentItem;
         },
@@ -100,6 +115,7 @@ const UIController = (function () {
 
     const UISelectors = {
         itemList: '#expense-list',
+        listItems: '#expense-list li',
         addBtn: '.add-btn',
         updateBtn: '.update-btn',
         deleteBtn: '.delete-btn',
@@ -136,6 +152,13 @@ const UIController = (function () {
                 category: document.querySelector(UISelectors.expenseCategory).textContent
             }
         },
+        getExpenseInputWhenUpdating: function () {
+            return {
+                name: document.querySelector(UISelectors.expenseNameInput).value,
+                amount: document.querySelector(UISelectors.expenseAmountInput).value,
+                category: $('select').find(":selected").text()
+            }
+        },
         addListItem: function (item) {
             // Show the list
             document.querySelector(UISelectors.itemList).style.display = 'block';
@@ -154,6 +177,22 @@ const UIController = (function () {
                             </a>`
             // Insert item in UI list
             document.querySelector(UISelectors.itemList).appendChild(li);
+        },
+        updateListItem: function (item) {
+            let listItems = document.querySelectorAll(UISelectors.listItems);
+
+            listItems = Array.from(listItems);
+            listItems.forEach(function (listItem) {
+                const itemId = listItem.getAttribute('id');
+                if (itemId === `item-${item.id}`) {
+                    document.querySelector(`#${itemId}`).innerHTML = `<span class="title green-text text-darken-2">${item.category} | </span>
+                    <strong>${item.name}: </strong>
+                    <em>${item.amount} euros</em>
+                    <a href="#" class="secondary-content">
+                        <i class="edit-item fa fa-pencil"></i>
+                    </a>`
+                }
+            });
         },
         clearInput: function () {
             document.querySelector(UISelectors.expenseNameInput).value = '';
@@ -225,7 +264,7 @@ const App = (function (ItemController, UIController) {
         document.querySelector(UISelectors.itemList).addEventListener('click', itemEditClick);
 
         // Update item event
-        // document.querySelector(UISelectors.updateBtn).addEventListener('click', itemUpdateSubmit);
+        document.querySelector(UISelectors.updateBtn).addEventListener('click', itemUpdateSubmit);
     }
 
     // Add item on submit
@@ -271,6 +310,28 @@ const App = (function (ItemController, UIController) {
             // Add item to form
             UIController.addExpenseToForm();
         }
+    }
+
+    // Update item submit
+    const itemUpdateSubmit = function (e) {
+
+        const input = UIController.getExpenseInputWhenUpdating();
+
+        // Update expense
+        const updatedExpense = ItemController.updateExpense(input.name, input.amount, input.category);
+
+        // Update UI
+        UIController.updateListItem(updatedExpense);
+
+        // Get total expenses
+        const totalExpenses = ItemController.getTotalExpenses();
+
+        // Add total expenses to the UI
+        UIController.showTotalExpenses(totalExpenses);
+
+        UIController.clearEditState();
+
+        e.preventDefault();
     }
 
     // Public methods
