@@ -57,7 +57,7 @@ const ItemController = (function () {
             amount = parseInt(amount);
 
             // Create new expense
-            const newExpense = new Expense(id, category, name, amount);
+            newExpense = new Expense(id, category, name, amount);
 
             // Add expense to list
             data.items.push(newExpense);
@@ -108,6 +108,27 @@ const UIController = (function () {
                 category: document.querySelector(UISelectors.expenseCategory).textContent
             }
         },
+        addListItem: function (item) {
+            // Create li element
+            const li = document.createElement('li');
+            // Add class
+            li.className = 'collection-item';
+            // Add id
+            li.id = `item-${item.id}`;
+            // Add html
+            li.innerHTML = `<span class="title green-text text-darken-2">${item.category} | </span>
+                            <strong>${item.name}: </strong>
+                            <em>${item.amount} euros</em>
+                            <a href="#" class="secondary-content">
+                                <i class="edit-item fa fa-pencil"></i>
+                            </a>`
+            // Insert item in UI list
+            document.querySelector(UISelectors.itemList).appendChild(li);
+        },
+        clearInput: function () {
+            document.querySelector(UISelectors.expenseNameInput).value = '';
+            document.querySelector(UISelectors.expenseAmountInput).value = '';
+        },
         getSelectors: function () {
             return UISelectors;
         }
@@ -137,6 +158,12 @@ const App = (function (ItemController, UIController) {
             // Add expense
             const newExpense = ItemController.addExpense(input.category, input.name, input.amount);
         }
+
+        // Add expense to UI list
+        UIController.addListItem(newExpense);
+
+        // Clear fields
+        UIController.clearInput();
 
         e.preventDefault();
     }
