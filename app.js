@@ -67,6 +67,18 @@ const ItemController = (function () {
             return newExpense;
 
         },
+        getExpenseById: function (id) {
+            let found = data.items.find(function (item) {
+                return item.id === id;
+            });
+            return found;
+        },
+        getCurrentExpense: function () {
+            return data.currentItem;
+        },
+        setCurrentExpense: function (item) {
+            data.currentItem = item;
+        },
         getTotalExpenses: function () {
             let total = 0;
             data.items.forEach(function (item) {
@@ -89,10 +101,14 @@ const UIController = (function () {
     const UISelectors = {
         itemList: '#expense-list',
         addBtn: '.add-btn',
+        updateBtn: '.update-btn',
+        deleteBtn: '.delete-btn',
+        backBtn: '.back-btn',
         expenseNameInput: '#item-name',
         expenseAmountInput: '#item-amount',
         expenseCategory: '.optgroup-option.active.selected span',
-        totalExpenses: '.total-expenses'
+        totalExpenses: '.total-expenses',
+        categoriesDropdown: '#categories'
     }
 
     // Public methods
@@ -142,12 +158,41 @@ const UIController = (function () {
         clearInput: function () {
             document.querySelector(UISelectors.expenseNameInput).value = '';
             document.querySelector(UISelectors.expenseAmountInput).value = '';
+            UIController.resetDropdown();
+        },
+        resetDropdown: function () {
+            $('select').prop('selectedIndex', 0); // Sets the first option as selected
+            $('select').material_select(); // Update material select
+        },
+        addExpenseToForm: function () {
+            document.querySelector(UISelectors.expenseNameInput).value = ItemController.getCurrentExpense().name;
+            document.querySelector(UISelectors.expenseAmountInput).value = ItemController.getCurrentExpense().amount;
+            // update dropdown
+            UIController.updateDropdownSelection(ItemController.getCurrentExpense().category);
+            UIController.showEditState();
+        },
+        updateDropdownSelection: function (category) {
+            $('select').val(category); // Sets the category as selected
+            $('select').material_select(); // Update material select
         },
         hideList: function () {
             document.querySelector(UISelectors.itemList).style.display = 'none';
         },
         showTotalExpenses: function (totalExpenses) {
             document.querySelector(UISelectors.totalExpenses).textContent = totalExpenses;
+        },
+        clearEditState: function () {
+            UIController.clearInput();
+            document.querySelector(UISelectors.updateBtn).style.display = 'none';
+            document.querySelector(UISelectors.deleteBtn).style.display = 'none';
+            document.querySelector(UISelectors.backBtn).style.display = 'none';
+            document.querySelector(UISelectors.addBtn).style.display = 'inline';
+        },
+        showEditState: function () {
+            document.querySelector(UISelectors.updateBtn).style.display = 'inline';
+            document.querySelector(UISelectors.deleteBtn).style.display = 'inline';
+            document.querySelector(UISelectors.backBtn).style.display = 'inline';
+            document.querySelector(UISelectors.addBtn).style.display = 'none';
         },
         getSelectors: function () {
             return UISelectors;
@@ -161,10 +206,26 @@ const App = (function (ItemController, UIController) {
 
     // Load event listeners
     const loadEventListeners = function () {
+
         // Get UI Selectors
         const UISelectors = UIController.getSelectors();
+
         // Add item event
         document.querySelector(UISelectors.addBtn).addEventListener('click', addItemOnSubmit);
+
+        // Disable submit on enter
+        document.addEventListener('keypress', function (e) {
+            if (e.keyCode === 13 || e.which === 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Edit icon click event
+        document.querySelector(UISelectors.itemList).addEventListener('click', itemEditClick);
+
+        // Update item event
+        // document.querySelector(UISelectors.updateBtn).addEventListener('click', itemUpdateSubmit);
     }
 
     // Add item on submit
@@ -195,9 +256,30 @@ const App = (function (ItemController, UIController) {
         e.preventDefault();
     }
 
+    const itemEditClick = function (e) {
+
+        if (e.target.classList.contains('edit-item')) {
+
+            // Get list item id
+            const listId = e.target.parentNode.parentNode.id;
+            // Get actual id
+            const id = parseInt(listId.split('-')[1]);
+            // Get item
+            const itemToEdit = ItemController.getExpenseById(id);
+            // Set current item
+            ItemController.setCurrentExpense(itemToEdit);
+            // Add item to form
+            UIController.addExpenseToForm();
+        }
+    }
+
     // Public methods
     return {
         init: function () {
+
+            // Clear edit state / set initial state
+            UIController.clearEditState();
+
             // fetch items from data structure
             const items = ItemController.getItems();
 

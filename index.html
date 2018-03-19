@@ -38,73 +38,73 @@
                 <form class="col">
                     <div class="row">
                         <div class="input-field col s4">
-                            <select>
+                            <select id="categories">
                                 <option value="" disabled selected>Choose your option</option>
                                 <optgroup label="Food">
-                                    <option value="12">Groceries</option>
-                                    <option value="13">Restaurant</option>
-                                    <option value="14">Street Food</option>
-                                    <option value="15">Pet Food</option>
+                                    <option value="Groceries">Groceries</option>
+                                    <option value="Restaurant">Restaurant</option>
+                                    <option value="Street Food">Street Food</option>
+                                    <option value="Pet Food">Pet Food</option>
                                 </optgroup>
                                 <optgroup label="Transportation">
-                                    <option value="4">Gas</option>
-                                    <option value="5">Car payment</option>
-                                    <option value="6">Tires</option>
-                                    <option value="7">Maintenance / Oil changes</option>
-                                    <option value="8">Parking Fee</option>
-                                    <option value="9">Repairs</option>
-                                    <option value="10">Bike gear</option>
-                                    <option value="11">Bike repairs</option>
+                                    <option value="Gas">Gas</option>
+                                    <option value="Car payment">Car payment</option>
+                                    <option value="Tires">Tires</option>
+                                    <option value="Maintenance / Oil changes">Maintenance / Oil changes</option>
+                                    <option value="Parking Fee">Parking Fee</option>
+                                    <option value="Repairs">Repairs</option>
+                                    <option value="Bike gear">Bike gear</option>
+                                    <option value="Bike repairs">Bike repairs</option>
                                 </optgroup>
                                 <optgroup label="Utilities">
-                                    <option value="12">Electricity</option>
-                                    <option value="13">Water</option>
-                                    <option value="14">Phones</option>
-                                    <option value="15">Cable</option>
-                                    <option value="15">Internet</option>
+                                    <option value="Electricity">Electricity</option>
+                                    <option value="Water">Water</option>
+                                    <option value="Phones">Phones</option>
+                                    <option value="Cable">Cable</option>
+                                    <option value="Internet">Internet</option>
                                 </optgroup>
                                 <optgroup label="Housing">
-                                    <option value="1">Mortgage or Rent</option>
-                                    <option value="2">Property tax</option>
-                                    <option value="3">Household repairs</option>
+                                    <option value="Mortgage or Rent">Mortgage or Rent</option>
+                                    <option value="Property tax">Property tax</option>
+                                    <option value="Household repairs">Household repairs</option>
                                 </optgroup>
                                 <optgroup label="Household supplies">
-                                    <option value="1">Toiletries</option>
-                                    <option value="2">Laundry detergent</option>
-                                    <option value="3">Cleaning supplies</option>
-                                    <option value="3">Tools</option>
+                                    <option value="Toiletries">Toiletries</option>
+                                    <option value="Laundry detergent">Laundry detergent</option>
+                                    <option value="Cleaning supplies">Cleaning supplies</option>
+                                    <option value="Tools">Tools</option>
                                 </optgroup>
                                 <optgroup label="Clothing">
-                                    <option value="12">Clothing</option>
-                                    <option value="13">Shoes</option>
+                                    <option value="Clothing">Clothing</option>
+                                    <option value="Shoes">Shoes</option>
                                 </optgroup>
                                 <optgroup label="Education">
-                                    <option value="1">Courses / Tutorials / Trainings</option>
-                                    <option value="2">Books</option>
-                                    <option value="3">School supplies</option>
+                                    <option value="Courses / Tutorials / Trainings">Courses / Tutorials / Trainings</option>
+                                    <option value="Books">Books</option>
+                                    <option value="School supplies">School supplies</option>
                                 </optgroup>
                                 <optgroup label="Entertainment">
-                                    <option value="1">Alcohol and/or Bars</option>
-                                    <option value="2">Movies</option>
-                                    <option value="3">Concerts</option>
-                                    <option value="3">Subscriptions (Netflix, Amazon, etc.)</option>
-                                    <option value="3">Vacations</option>
-                                    <option value="3">Games</option>
+                                    <option value="Alcohol and/or Bars">Alcohol and/or Bars</option>
+                                    <option value="Movies">Movies</option>
+                                    <option value="Concerts">Concerts</option>
+                                    <option value="Subscriptions (Netflix, Amazon, etc.)">Subscriptions (Netflix, Amazon, etc.)</option>
+                                    <option value="Vacations">Vacations</option>
+                                    <option value="Games">Games</option>
                                 </optgroup>
                                 <optgroup label="Personal">
-                                    <option value="1">Gym membership</option>
-                                    <option value="2">Haircuts</option>
-                                    <option value="3">Salon services</option>
-                                    <option value="3">Cosmetics</option>
-                                    <option value="3">Spa / Massage / Treatments</option>
+                                    <option value="Gym membership">Gym membership</option>
+                                    <option value="Haircuts">Haircuts</option>
+                                    <option value="Salon services">Salon services</option>
+                                    <option value="Cosmetics">Cosmetics</option>
+                                    <option value="Spa / Massage / Treatments">Spa / Massage / Treatments</option>
                                 </optgroup>
                                 <optgroup label="Debt">
-                                    <option value="1">Credit Card Refund</option>
-                                    <option value="2">Personal Loans Refund</option>
+                                    <option value="Credit Card Refund">Credit Card Refund</option>
+                                    <option value="Personal Loans Refund">Personal Loans Refund</option>
                                 </optgroup>
                                 <optgroup label="Savings">
-                                    <option value="1">Emergency Fund</option>
-                                    <option value="2">Savings</option>
+                                    <option value="Emergency Fund">Emergency Fund</option>
+                                    <option value="Savings">Savings</option>
                                 </optgroup>
                             </select>
                             <label>Expense Category</label>
@@ -119,10 +119,10 @@
                         </div>
                         <button class="add-btn btn green darken-3 waves-effect">
                             <i class="fa fa-plus"></i> Add Expense</button>
-                        <!-- <button class="update-btn btn orange waves-effect">
+                        <button class="update-btn btn orange waves-effect">
                             <i class="fa fa-pencil-square-o"></i> Update Expense</button>
                         <button class="delete-btn btn red waves-effect">
-                            <i class="fa fa-remove"></i> Delete Expense</button> -->
+                            <i class="fa fa-remove"></i> Delete Expense</button>
                         <button class="back-btn btn grey pull-right waves-effect">
                             <i class="fa fa-chevron-circle-left"></i> Back</button>
                     </div>
