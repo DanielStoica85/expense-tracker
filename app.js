@@ -19,22 +19,24 @@ const ItemController = (function () {
 
     // Data Structure / State
     const data = {
-        items: [{
-            id: 0,
-            category: 'Housing',
-            name: 'Rent',
-            amount: 650
-        }, {
-            id: 1,
-            category: 'Restaurant',
-            name: 'Monelli',
-            amount: 100
-        }, {
-            id: 2,
-            category: 'Gas',
-            name: 'Gas March',
-            amount: 100
-        }],
+        items: [
+            //     {
+            //     id: 0,
+            //     category: 'Housing',
+            //     name: 'Rent',
+            //     amount: 650
+            // }, {
+            //     id: 1,
+            //     category: 'Restaurant',
+            //     name: 'Monelli',
+            //     amount: 100
+            // }, {
+            //     id: 2,
+            //     category: 'Gas',
+            //     name: 'Gas March',
+            //     amount: 100
+            // }
+        ],
         currentItem: null,
         totalExpenses: 0
     }
@@ -65,6 +67,15 @@ const ItemController = (function () {
             return newExpense;
 
         },
+        getTotalExpenses: function () {
+            let total = 0;
+            data.items.forEach(function (item) {
+                total += item.amount;
+            });
+            // Set total expenses in data structure
+            data.totalExpenses = total;
+            return data.totalExpenses;
+        },
         logData: function () {
             return data;
         }
@@ -80,7 +91,8 @@ const UIController = (function () {
         addBtn: '.add-btn',
         expenseNameInput: '#item-name',
         expenseAmountInput: '#item-amount',
-        expenseCategory: '.optgroup-option.active.selected span'
+        expenseCategory: '.optgroup-option.active.selected span',
+        totalExpenses: '.total-expenses'
     }
 
     // Public methods
@@ -109,6 +121,8 @@ const UIController = (function () {
             }
         },
         addListItem: function (item) {
+            // Show the list
+            document.querySelector(UISelectors.itemList).style.display = 'block';
             // Create li element
             const li = document.createElement('li');
             // Add class
@@ -128,6 +142,12 @@ const UIController = (function () {
         clearInput: function () {
             document.querySelector(UISelectors.expenseNameInput).value = '';
             document.querySelector(UISelectors.expenseAmountInput).value = '';
+        },
+        hideList: function () {
+            document.querySelector(UISelectors.itemList).style.display = 'none';
+        },
+        showTotalExpenses: function (totalExpenses) {
+            document.querySelector(UISelectors.totalExpenses).textContent = totalExpenses;
         },
         getSelectors: function () {
             return UISelectors;
@@ -155,15 +175,22 @@ const App = (function (ItemController, UIController) {
 
         // Check for name and amount
         if (input.name !== '' && input.amount !== '') {
+
             // Add expense
             const newExpense = ItemController.addExpense(input.category, input.name, input.amount);
+
+            // Add expense to UI list
+            UIController.addListItem(newExpense);
+
+            // Get total expenses
+            const totalExpenses = ItemController.getTotalExpenses();
+
+            // Add total expenses to the UI
+            UIController.showTotalExpenses(totalExpenses);
+
+            // Clear fields
+            UIController.clearInput();
         }
-
-        // Add expense to UI list
-        UIController.addListItem(newExpense);
-
-        // Clear fields
-        UIController.clearInput();
 
         e.preventDefault();
     }
@@ -174,8 +201,20 @@ const App = (function (ItemController, UIController) {
             // fetch items from data structure
             const items = ItemController.getItems();
 
-            // populate list with fetched items
-            UIController.populateItemList(items);
+            // Check if any items
+            if (items.length === 0) {
+                // hide list if no items
+                UIController.hideList();
+            } else {
+                // populate list with fetched items
+                UIController.populateItemList(items);
+            }
+
+            // Get total expenses
+            const totalExpenses = ItemController.getTotalExpenses();
+
+            // Add total expenses to the UI
+            UIController.showTotalExpenses(totalExpenses);
 
             // Load event listeners
             loadEventListeners();
