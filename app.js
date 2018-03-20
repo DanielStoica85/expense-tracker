@@ -98,6 +98,9 @@ const ItemController = (function () {
             // Remove item
             data.items.splice(index, 1);
         },
+        clearAllItems: function () {
+            data.items = [];
+        },
         getCurrentExpense: function () {
             return data.currentItem;
         },
@@ -130,6 +133,7 @@ const UIController = (function () {
         updateBtn: '.update-btn',
         deleteBtn: '.delete-btn',
         backBtn: '.back-btn',
+        clearBtn: '.clear-btn',
         expenseNameInput: '#item-name',
         expenseAmountInput: '#item-amount',
         expenseCategory: '.optgroup-option.active.selected span',
@@ -208,6 +212,11 @@ const UIController = (function () {
             const itemId = `#item-${id}`;
             const item = document.querySelector(itemId);
             item.remove();
+            // hide list after removing the last item
+            let listItems = document.querySelectorAll(UISelectors.listItems);
+            if (listItems.length === 0) {
+                UIController.hideList();
+            }
         },
         clearInput: function () {
             document.querySelector(UISelectors.expenseNameInput).value = '';
@@ -224,6 +233,14 @@ const UIController = (function () {
             // update dropdown
             UIController.updateDropdownSelection(ItemController.getCurrentExpense().category);
             UIController.showEditState();
+        },
+        removeItems: function () {
+            let listItems = document.querySelectorAll(UISelectors.listItems);
+
+            listItems = Array.from(listItems);
+            listItems.forEach(function (item) {
+                item.remove();
+            });
         },
         updateDropdownSelection: function (category) {
             $('select').val(category); // Sets the category as selected
@@ -290,6 +307,9 @@ const App = (function (ItemController, UIController) {
 
         // Back button event
         document.querySelector(UISelectors.backBtn).addEventListener('click', UIController.backBtnClick);
+
+        // Clear items event
+        document.querySelector(UISelectors.clearBtn).addEventListener('click', clearAllItemsClick);
     }
 
     // Add item on submit
@@ -359,6 +379,7 @@ const App = (function (ItemController, UIController) {
         e.preventDefault();
     }
 
+    // Delete expense event
     const itemDeleteSubmit = function (e) {
 
         // Get current expense
@@ -379,6 +400,28 @@ const App = (function (ItemController, UIController) {
         UIController.clearEditState();
 
         e.preventDefault();
+    }
+
+    // Clear expenses event
+    const clearAllItemsClick = function (e) {
+
+        // Delete all items from data structure
+        ItemController.clearAllItems();
+
+        // Get total expenses
+        const totalExpenses = ItemController.getTotalExpenses();
+
+        // Add total expenses to the UI
+        UIController.showTotalExpenses(totalExpenses);
+
+        // Remove all expenses from UI
+        UIController.removeItems();
+
+        // Hide the list
+        UIController.hideList();
+
+        e.preventDefault();
+
     }
 
     // Public methods
