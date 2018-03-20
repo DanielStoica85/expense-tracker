@@ -88,6 +88,16 @@ const ItemController = (function () {
             });
             return found;
         },
+        deleteExpense: function (id) {
+            // Get all ids
+            const ids = data.items.map(function (item) {
+                return item.id;
+            });
+            // Get index
+            const index = ids.indexOf(id);
+            // Remove item
+            data.items.splice(index, 1);
+        },
         getCurrentExpense: function () {
             return data.currentItem;
         },
@@ -194,6 +204,11 @@ const UIController = (function () {
                 }
             });
         },
+        deleteListItem: function (id) {
+            const itemId = `#item-${id}`;
+            const item = document.querySelector(itemId);
+            item.remove();
+        },
         clearInput: function () {
             document.querySelector(UISelectors.expenseNameInput).value = '';
             document.querySelector(UISelectors.expenseAmountInput).value = '';
@@ -233,6 +248,10 @@ const UIController = (function () {
             document.querySelector(UISelectors.backBtn).style.display = 'inline';
             document.querySelector(UISelectors.addBtn).style.display = 'none';
         },
+        backBtnClick: function (e) {
+            UIController.clearEditState();
+            e.preventDefault();
+        },
         getSelectors: function () {
             return UISelectors;
         }
@@ -265,6 +284,12 @@ const App = (function (ItemController, UIController) {
 
         // Update item event
         document.querySelector(UISelectors.updateBtn).addEventListener('click', itemUpdateSubmit);
+
+        // Delete item event
+        document.querySelector(UISelectors.deleteBtn).addEventListener('click', itemDeleteSubmit);
+
+        // Back button event
+        document.querySelector(UISelectors.backBtn).addEventListener('click', UIController.backBtnClick);
     }
 
     // Add item on submit
@@ -322,6 +347,28 @@ const App = (function (ItemController, UIController) {
 
         // Update UI
         UIController.updateListItem(updatedExpense);
+
+        // Get total expenses
+        const totalExpenses = ItemController.getTotalExpenses();
+
+        // Add total expenses to the UI
+        UIController.showTotalExpenses(totalExpenses);
+
+        UIController.clearEditState();
+
+        e.preventDefault();
+    }
+
+    const itemDeleteSubmit = function (e) {
+
+        // Get current expense
+        const currentExpense = ItemController.getCurrentExpense();
+
+        // Delete expense from data structure
+        ItemController.deleteExpense(currentExpense.id);
+
+        // Delete from UI
+        UIController.deleteListItem(currentExpense.id);
 
         // Get total expenses
         const totalExpenses = ItemController.getTotalExpenses();
