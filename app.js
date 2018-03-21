@@ -5,6 +5,39 @@ $(document).ready(function () {
 });
 
 // Storage Controller
+const StorageController = (function () {
+    // Public methods
+    return {
+        storeItem: function (expense) {
+            let expenses;
+            // Check if any expenses in local storage
+            if (localStorage.getItem('expenses') === null) {
+                // Create empty list
+                items = [];
+                // Add new expense
+                items.push(expense);
+                // Add it to local storage
+                localStorage.setItem('expenses', JSON.stringify(items));
+            } else {
+                // Get what's already in local storage
+                items = JSON.parse(localStorage.getItem('expenses'));
+                // Add new expense
+                items.push(expense);
+                // Add it to local storage again
+                localStorage.setItem('expenses', JSON.stringify(items));
+            }
+        },
+        getItemsFromStorage: function () {
+            let items;
+            if (localStorage.getItem('expenses') === null) {
+                items = [];
+            } else {
+                items = JSON.parse(localStorage.getItem('expenses'));
+            }
+            return items;
+        }
+    }
+})();
 
 // Item Controller
 const ItemController = (function () {
@@ -19,24 +52,7 @@ const ItemController = (function () {
 
     // Data Structure / State
     const data = {
-        items: [
-            //     {
-            //     id: 0,
-            //     category: 'Housing',
-            //     name: 'Rent',
-            //     amount: 650
-            // }, {
-            //     id: 1,
-            //     category: 'Restaurant',
-            //     name: 'Monelli',
-            //     amount: 100
-            // }, {
-            //     id: 2,
-            //     category: 'Gas',
-            //     name: 'Gas March',
-            //     amount: 100
-            // }
-        ],
+        items: StorageController.getItemsFromStorage(),
         currentItem: null,
         totalExpenses: 0
     }
@@ -277,7 +293,7 @@ const UIController = (function () {
 })();
 
 // App Controller
-const App = (function (ItemController, UIController) {
+const App = (function (ItemController, StorageController, UIController) {
 
     // Load event listeners
     const loadEventListeners = function () {
@@ -332,6 +348,9 @@ const App = (function (ItemController, UIController) {
 
             // Add total expenses to the UI
             UIController.showTotalExpenses(totalExpenses);
+
+            // Store expense in local storage
+            StorageController.storeItem(newExpense);
 
             // Clear fields
             UIController.clearInput();
@@ -454,7 +473,7 @@ const App = (function (ItemController, UIController) {
         }
     }
 
-})(ItemController, UIController);
+})(ItemController, StorageController, UIController);
 
 // Initialize App
 App.init();
