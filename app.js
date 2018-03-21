@@ -27,6 +27,18 @@ const StorageController = (function () {
                 localStorage.setItem('expenses', JSON.stringify(items));
             }
         },
+        updateItemInStorage: function (updatedExpense) {
+            let items = JSON.parse(localStorage.getItem('expenses'));
+
+            items.forEach(function (item, index) {
+                if (updatedExpense.id === item.id) {
+                    // find the corresponding expense and replace it with the updated one
+                    items.splice(index, 1, updatedExpense);
+                }
+            });
+            // Update local storage
+            localStorage.setItem('expenses', JSON.stringify(items));
+        },
         getItemsFromStorage: function () {
             let items;
             if (localStorage.getItem('expenses') === null) {
@@ -392,6 +404,9 @@ const App = (function (ItemController, StorageController, UIController) {
 
         // Add total expenses to the UI
         UIController.showTotalExpenses(totalExpenses);
+
+        // Update in local storage
+        StorageController.updateItemInStorage(updatedExpense);
 
         UIController.clearEditState();
 
