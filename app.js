@@ -39,6 +39,21 @@ const StorageController = (function () {
             // Update local storage
             localStorage.setItem('expenses', JSON.stringify(items));
         },
+        deleteExpenseFromStorage: function (id) {
+            let items = JSON.parse(localStorage.getItem('expenses'));
+
+            items.forEach(function (item, index) {
+                if (id === item.id) {
+                    // find the corresponding expense and delete it
+                    items.splice(index, 1);
+                }
+            });
+            // Update local storage
+            localStorage.setItem('expenses', JSON.stringify(items));
+        },
+        clearExpensesFromStorage: function () {
+            localStorage.removeItem('expenses');
+        },
         getItemsFromStorage: function () {
             let items;
             if (localStorage.getItem('expenses') === null) {
@@ -431,6 +446,9 @@ const App = (function (ItemController, StorageController, UIController) {
         // Add total expenses to the UI
         UIController.showTotalExpenses(totalExpenses);
 
+        // Delete from local storage
+        StorageController.deleteExpenseFromStorage(currentExpense.id);
+
         UIController.clearEditState();
 
         e.preventDefault();
@@ -450,6 +468,9 @@ const App = (function (ItemController, StorageController, UIController) {
 
         // Remove all expenses from UI
         UIController.removeItems();
+
+        // Delete all expenses from local storage
+        StorageController.clearExpensesFromStorage();
 
         // Hide the list
         UIController.hideList();
