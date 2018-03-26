@@ -1,3 +1,9 @@
 .dropdown-content {
     max-height: 520px;
 }
+
+#validation-message {
+    display: none;
+    width: 100%;
+    text-align: center;
+}

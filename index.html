@@ -9,8 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
     <link rel="stylesheet" href="style.css">
-
-
 </head>
 
 <body>
@@ -22,6 +20,9 @@
             <ul class="right">
                 <li>
                     <a href="#" class="clear-btn btn green lighten-3 waves-effect">Clear expenses</a>
+                </li>
+                <li>
+                    <a href="#" class="income-btn btn blue lighten-3 waves-effect">Add Income</a>
                 </li>
             </ul>
         </div>
@@ -35,10 +36,11 @@
         <div class="card">
             <div class="card-content">
                 <span class="card-title">Add Expense</span>
+                <!-- Add expense form -->
                 <form class="col">
                     <div class="row">
                         <div class="input-field col s4">
-                            <select id="categories">
+                            <select id="categories" required="required">
                                 <option value="" disabled selected>Choose your option</option>
                                 <optgroup label="Food">
                                     <option value="Groceries">Groceries</option>
@@ -107,60 +109,76 @@
                                     <option value="Savings">Savings</option>
                                 </optgroup>
                             </select>
-                            <label>Expense Category</label>
+                            <label data-error="Select an option">Expense Category</label>
                         </div>
                         <div class="input-field col s4">
                             <input type="text" placeholder="Add expense name" id="item-name">
-                            <label for="item-name">Spent on:</label>
+                            <label data-error="Select an option" for="item-name">Spent on:</label>
                         </div>
                         <div class="input-field col s4">
-                            <input type="number" placeholder="Add amount spent" id="item-amount">
+                            <input type="number" step=".01" placeholder="Add amount spent" id="item-amount">
                             <label for="item-amount">Spent:</label>
                         </div>
-                        <button class="add-btn btn green darken-3 waves-effect">
-                            <i class="fa fa-plus"></i> Add Expense</button>
-                        <button class="update-btn btn orange waves-effect">
-                            <i class="fa fa-pencil-square-o"></i> Update Expense</button>
-                        <button class="delete-btn btn red waves-effect">
-                            <i class="fa fa-remove"></i> Delete Expense</button>
-                        <button class="back-btn btn grey pull-right waves-effect">
-                            <i class="fa fa-chevron-circle-left"></i> Back</button>
+                        <div class="col s12">
+                            <button class="add-btn btn green darken-3 waves-effect" type="submit">
+                                <i class="fa fa-plus"></i> Add Expense</button>
+                            <button class="update-btn btn orange waves-effect">
+                                <i class="fa fa-pencil-square-o"></i> Update Expense</button>
+                            <button class="delete-btn btn red waves-effect">
+                                <i class="fa fa-remove"></i> Delete Expense</button>
+                            <button class="back-btn btn grey pull-right waves-effect">
+                                <i class="fa fa-chevron-circle-left"></i> Back</button>
+                        </div>
                     </div>
                 </form>
+                <!-- End of add expense form -->
+                <!-- Add income -->
+                <div class="row">
+                    <form class="add-income">
+                        <div class="input-field col s4">
+                            <input type="number" step=".01" placeholder="Add income" id="income-amount">
+                            <label for="income-amount">Earned:</label>
+                        </div>
+                        <div class="col s12">
+                            <button class="income-submit-btn btn blue darken-3">
+                                <i class="fa fa-plus"></i> Add Income</button>
+                            <button class="income-back-btn btn grey waves-effect">
+                                <i class="fa fa-chevron-circle-up"></i> Back</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- End of add income -->
+
+                <!-- Error message -->
+                <div class="row">
+                    <div class="col s6 offset-s3">
+                        <div class="card-panel red lighten-2" id="validation-message">Please make sure to select category and add name & amount.</div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Expense Count -->
-        <h3 class="center-align">Total Expenses:
-            <span class="total-expenses">0</span>
-        </h3>
+        <div class="row expense-and-income">
+            <div class="col s4 total">
+                <h3 class="center-align">Expenses:
+                    <span class="total-expenses red-text text-darken-2">0</span>
+                </h3>
+            </div>
+            <div class="col s4 income">
+                <h3 class="center-align">Income:
+                    <span class="total-income blue-text text-darken-2">0</span>
+                </h3>
+            </div>
+            <div class="col s4 balance">
+                <h3 class="center-align">Balance:
+                    <span class="total-balance green-text text-darken-2">0</span>
+                </h3>
+            </div>
+        </div>
 
         <!-- Expense List -->
         <ul id="expense-list" class="collection">
-            <!-- <li class="collection-item" id="item-0">
-                <span class="title green-text text-darken-2">Housing | </span>
-                <strong>Rent for April: </strong>
-                <em>650 euros</em>
-                <a href="#" class="secondary-content">
-                    <i class="fa fa-pencil"></i>
-                </a>
-            </li>
-            <li class="collection-item" id="item-0">
-                <span class="title green-text text-darken-2">Housing | </span>
-                <strong>Rent for April: </strong>
-                <em>650 euros</em>
-                <a href="#" class="secondary-content">
-                    <i class="fa fa-pencil"></i>
-                </a>
-            </li>
-            <li class="collection-item" id="item-0">
-                <span class="title green-text text-darken-2">Housing | </span>
-                <strong>Rent for April: </strong>
-                <em>650 euros</em>
-                <a href="#" class="secondary-content">
-                    <i class="fa fa-pencil"></i>
-                </a>
-            </li> -->
         </ul>
 
     </div>
@@ -169,6 +187,8 @@
         crossorigin="anonymous"></script>
     <!-- Compiled and minified Materialize JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js" integrity="sha256-CfcERD4Ov4+lKbWbYqXD6aFM9M51gN4GUEtDhkWABMo="
+        crossorigin="anonymous"></script>
     <script src="app.js"></script>
 </body>
 

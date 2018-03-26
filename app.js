@@ -27,6 +27,10 @@ const StorageController = (function () {
                 localStorage.setItem('expenses', JSON.stringify(items));
             }
         },
+        storeIncome: function (income) {
+            let newIncome = localStorage.getItem('income') + income;
+            localStorage.setItem('income', newIncome);
+        },
         updateItemInStorage: function (updatedExpense) {
             let items = JSON.parse(localStorage.getItem('expenses'));
 
@@ -62,6 +66,15 @@ const StorageController = (function () {
                 items = JSON.parse(localStorage.getItem('expenses'));
             }
             return items;
+        },
+        getIncomeFromStorage: function () {
+            let income;
+            if (localStorage.getItem('income') === null) {
+                income = 0;
+            } else {
+                income = localStorage.getItem('income');
+            }
+            return income;
         }
     }
 })();
@@ -81,7 +94,9 @@ const ItemController = (function () {
     const data = {
         items: StorageController.getItemsFromStorage(),
         currentItem: null,
-        totalExpenses: 0
+        totalExpenses: 0,
+        income: StorageController.getIncomeFromStorage(),
+        balance: 0
     }
 
     // Public methods
@@ -99,7 +114,7 @@ const ItemController = (function () {
             }
 
             // Amount --> Number
-            amount = parseInt(amount);
+            amount = parseFloat(amount);
 
             // Create new expense
             newExpense = new Expense(id, category, name, amount);
@@ -110,6 +125,11 @@ const ItemController = (function () {
             return newExpense;
 
         },
+        addIncome: function (income) {
+            income = parseFloat(income);
+            data.income += income;
+            return data.income;
+        },
         getExpenseById: function (id) {
             let found = data.items.find(function (item) {
                 return item.id === id;
@@ -118,7 +138,7 @@ const ItemController = (function () {
         },
         updateExpense: function (name, amount, category) {
             // Amount to number
-            amount = parseInt(amount);
+            amount = parseFloat(amount);
 
             let found = null;
             data.items.forEach(function (item) {
@@ -159,6 +179,12 @@ const ItemController = (function () {
             data.totalExpenses = total;
             return data.totalExpenses;
         },
+        getIncome: function () {
+            return data.income;
+        },
+        getBalance: function () {
+            return data.balance;
+        },
         logData: function () {
             return data;
         }
@@ -177,11 +203,19 @@ const UIController = (function () {
         deleteBtn: '.delete-btn',
         backBtn: '.back-btn',
         clearBtn: '.clear-btn',
+        incomeBtn: '.income-btn',
         expenseNameInput: '#item-name',
         expenseAmountInput: '#item-amount',
         expenseCategory: '.optgroup-option.active.selected span',
         totalExpenses: '.total-expenses',
-        categoriesDropdown: '#categories'
+        categoriesDropdown: '#categories',
+        validationMessage: '#validation-message',
+        addIncomeForm: '.add-income',
+        incomeBackBtn: '.income-back-btn',
+        incomeSubmitBtn: '.income-submit-btn',
+        incomeInput: '#income-amount',
+        totalIncome: '.total-income',
+        totalBalance: '.total-balance'
     }
 
     // Public methods
@@ -206,8 +240,11 @@ const UIController = (function () {
             return {
                 name: document.querySelector(UISelectors.expenseNameInput).value,
                 amount: document.querySelector(UISelectors.expenseAmountInput).value,
-                category: document.querySelector(UISelectors.expenseCategory).textContent
+                category: document.querySelector(UISelectors.expenseCategory) ? document.querySelector(UISelectors.expenseCategory).textContent : ''
             }
+        },
+        getIncomeInput: function () {
+            return document.querySelector(UISelectors.incomeInput).value;
         },
         getExpenseInputWhenUpdating: function () {
             return {
@@ -308,9 +345,33 @@ const UIController = (function () {
             document.querySelector(UISelectors.backBtn).style.display = 'inline';
             document.querySelector(UISelectors.addBtn).style.display = 'none';
         },
+        clearIncomeAddState: function () {
+            document.querySelector(UISelectors.incomeInput).value = '';
+            document.querySelector(UISelectors.addIncomeForm).style.display = 'none';
+        },
+        showIncomeAddState: function () {
+            document.querySelector(UISelectors.addIncomeForm).style.display = 'block';
+        },
         backBtnClick: function (e) {
             UIController.clearEditState();
             e.preventDefault();
+        },
+        incomeBackBtnClick: function (e) {
+            UIController.clearIncomeAddState();
+            e.preventDefault();
+        },
+        showValidationMessage: function (message) {
+            document.querySelector(UISelectors.validationMessage).textContent = message;
+            document.querySelector(UISelectors.validationMessage).style.display = 'block';
+            setTimeout(function () {
+                document.querySelector(UISelectors.validationMessage).style.display = 'none';
+            }, 3000);
+        },
+        showIncome: function (income) {
+            document.querySelector(UISelectors.totalIncome).textContent = income;
+        },
+        showBalance: function (balance) {
+            document.querySelector(UISelectors.totalBalance).textContent = balance;
         },
         getSelectors: function () {
             return UISelectors;
@@ -353,6 +414,15 @@ const App = (function (ItemController, StorageController, UIController) {
 
         // Clear items event
         document.querySelector(UISelectors.clearBtn).addEventListener('click', clearAllItemsClick);
+
+        // Add income click event
+        document.querySelector(UISelectors.incomeBtn).addEventListener('click', addIncomeClick);
+
+        // Add income submit event
+        document.querySelector(UISelectors.incomeSubmitBtn).addEventListener('click', addIncomeSubmit);
+
+        // Back from income button event
+        document.querySelector(UISelectors.incomeBackBtn).addEventListener('click', UIController.incomeBackBtnClick);
     }
 
     // Add item on submit
@@ -362,7 +432,7 @@ const App = (function (ItemController, StorageController, UIController) {
         const input = UIController.getExpenseInput();
 
         // Check for name and amount
-        if (input.name !== '' && input.amount !== '') {
+        if (input.name !== '' && input.amount !== '' && input.category !== '') {
 
             // Add expense
             const newExpense = ItemController.addExpense(input.category, input.name, input.amount);
@@ -381,6 +451,36 @@ const App = (function (ItemController, StorageController, UIController) {
 
             // Clear fields
             UIController.clearInput();
+        } else {
+            UIController.showValidationMessage('Please select category, name and amount for expense.');
+        }
+
+        e.preventDefault();
+    }
+
+    // Add income on submit
+    const addIncomeSubmit = function (e) {
+
+        const input = UIController.getIncomeInput();
+
+        if (input !== '') {
+
+            // Add income
+            const income = ItemController.addIncome(input);
+
+            // Add income to UI
+            UIController.showIncome(income);
+
+            // Store income in local storage
+            StorageController.storeIncome(income);
+
+            // Clear income add state
+            UIController.clearIncomeAddState();
+
+        } else {
+
+            UIController.showValidationMessage('Please add a valid income.');
+
         }
 
         e.preventDefault();
@@ -479,12 +579,22 @@ const App = (function (ItemController, StorageController, UIController) {
 
     }
 
+    const addIncomeClick = function (e) {
+
+        UIController.showIncomeAddState();
+
+        e.preventDefault();
+    }
+
     // Public methods
     return {
         init: function () {
 
             // Clear edit state / set initial state
             UIController.clearEditState();
+
+            // Clea income add state
+            UIController.clearIncomeAddState();
 
             // fetch items from data structure
             const items = ItemController.getItems();
@@ -503,6 +613,18 @@ const App = (function (ItemController, StorageController, UIController) {
 
             // Add total expenses to the UI
             UIController.showTotalExpenses(totalExpenses);
+
+            // Get income
+            const income = ItemController.getIncome();
+
+            // Add income to the UI
+            UIController.showIncome(income);
+
+            // Get balance
+            const balance = ItemController.getBalance();
+
+            // Add balance to the UI
+            UIController.showBalance(balance);
 
             // Load event listeners
             loadEventListeners();
