@@ -28,8 +28,10 @@ const StorageController = (function () {
             }
         },
         storeIncome: function (income) {
-            let newIncome = localStorage.getItem('income') + income;
-            localStorage.setItem('income', newIncome);
+            localStorage.setItem('income', income.toString());
+        },
+        updateBalance: function (balance) {
+            localStorage.setItem('balance', balance.toString());
         },
         updateItemInStorage: function (updatedExpense) {
             let items = JSON.parse(localStorage.getItem('expenses'));
@@ -57,6 +59,9 @@ const StorageController = (function () {
         },
         clearExpensesFromStorage: function () {
             localStorage.removeItem('expenses');
+        },
+        clearIncomeFromStorage: function (newIncome) {
+            localStorage.setItem('income', newIncome.toString());
         },
         getItemsFromStorage: function () {
             let items;
@@ -164,6 +169,9 @@ const ItemController = (function () {
         clearAllItems: function () {
             data.items = [];
         },
+        clearIncome: function () {
+            data.income = 0;
+        },
         getCurrentExpense: function () {
             return data.currentItem;
         },
@@ -183,6 +191,10 @@ const ItemController = (function () {
             return data.income;
         },
         getBalance: function () {
+            return data.balance;
+        },
+        updateBalance: function () {
+            data.balance = data.income > 0 ? data.income - data.totalExpenses : 0;
             return data.balance;
         },
         logData: function () {
@@ -215,7 +227,8 @@ const UIController = (function () {
         incomeSubmitBtn: '.income-submit-btn',
         incomeInput: '#income-amount',
         totalIncome: '.total-income',
-        totalBalance: '.total-balance'
+        totalBalance: '.total-balance',
+        clearIncomeBtn: '.clear-income-btn'
     }
 
     // Public methods
@@ -423,6 +436,9 @@ const App = (function (ItemController, StorageController, UIController) {
 
         // Back from income button event
         document.querySelector(UISelectors.incomeBackBtn).addEventListener('click', UIController.incomeBackBtnClick);
+
+        // Clear income event
+        document.querySelector(UISelectors.clearIncomeBtn).addEventListener('click', clearIncomeClick);
     }
 
     // Add item on submit
@@ -449,8 +465,18 @@ const App = (function (ItemController, StorageController, UIController) {
             // Store expense in local storage
             StorageController.storeItem(newExpense);
 
+            // Update balance
+            const balance = ItemController.updateBalance();
+
+            // Add new balance to UI
+            UIController.showBalance(balance);
+
+            // Add balance to local storage
+            StorageController.updateBalance(balance);
+
             // Clear fields
             UIController.clearInput();
+
         } else {
             UIController.showValidationMessage('Please select category, name and amount for expense.');
         }
@@ -463,7 +489,7 @@ const App = (function (ItemController, StorageController, UIController) {
 
         const input = UIController.getIncomeInput();
 
-        if (input !== '') {
+        if (input !== '' && input > 0) {
 
             // Add income
             const income = ItemController.addIncome(input);
@@ -473,6 +499,15 @@ const App = (function (ItemController, StorageController, UIController) {
 
             // Store income in local storage
             StorageController.storeIncome(income);
+
+            // Update balance
+            const balance = ItemController.updateBalance();
+
+            // Add new balance to UI
+            UIController.showBalance(balance);
+
+            // Add balance to local storage
+            StorageController.updateBalance(balance);
 
             // Clear income add state
             UIController.clearIncomeAddState();
@@ -523,6 +558,15 @@ const App = (function (ItemController, StorageController, UIController) {
         // Update in local storage
         StorageController.updateItemInStorage(updatedExpense);
 
+        // Update balance
+        const balance = ItemController.updateBalance();
+
+        // Add new balance to UI
+        UIController.showBalance(balance);
+
+        // Add balance to local storage
+        StorageController.updateBalance(balance);
+
         UIController.clearEditState();
 
         e.preventDefault();
@@ -549,6 +593,15 @@ const App = (function (ItemController, StorageController, UIController) {
         // Delete from local storage
         StorageController.deleteExpenseFromStorage(currentExpense.id);
 
+        // Update balance
+        const balance = ItemController.updateBalance();
+
+        // Add new balance to UI
+        UIController.showBalance(balance);
+
+        // Add balance to local storage
+        StorageController.updateBalance(balance);
+
         UIController.clearEditState();
 
         e.preventDefault();
@@ -572,11 +625,47 @@ const App = (function (ItemController, StorageController, UIController) {
         // Delete all expenses from local storage
         StorageController.clearExpensesFromStorage();
 
+        // Update balance
+        const balance = ItemController.updateBalance();
+
+        // Add new balance to UI
+        UIController.showBalance(balance);
+
+        // Add balance to local storage
+        StorageController.updateBalance(balance);
+
         // Hide the list
         UIController.hideList();
 
         e.preventDefault();
 
+    }
+
+    // Clear income event
+    const clearIncomeClick = function (e) {
+
+        // Clear income from data structure
+        ItemController.clearIncome();
+
+        // Get new income
+        const newIncome = ItemController.getIncome();
+
+        // Show income in UI
+        UIController.showIncome(newIncome);
+
+        // Update income in local storage
+        StorageController.clearIncomeFromStorage(newIncome);
+
+        // Update balance
+        const balance = ItemController.updateBalance();
+
+        // Add new balance to UI
+        UIController.showBalance(balance);
+
+        // Add balance to local storage
+        StorageController.updateBalance(balance);
+
+        e.preventDefault();
     }
 
     const addIncomeClick = function (e) {
@@ -593,7 +682,7 @@ const App = (function (ItemController, StorageController, UIController) {
             // Clear edit state / set initial state
             UIController.clearEditState();
 
-            // Clea income add state
+            // Clear income add state
             UIController.clearIncomeAddState();
 
             // fetch items from data structure
